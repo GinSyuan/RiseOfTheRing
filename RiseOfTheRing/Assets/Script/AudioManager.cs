@@ -9,17 +9,21 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
 
-    [Header("Audio Source (assign manually in the Inspector)")]
+    [Header("Audio Source")]
     public AudioSource sfxSource;   // AudioSource for playing one-shot SFX (Jump, Damage, PowerUp)
+    public AudioSource acidSource;
 
     [Header("Audio Clips")]
     public AudioClip jumpClip;      // Clip to play when the player jumps
     public AudioClip damageClip;    // Clip to play when the player takes damage
     public AudioClip powerupClip;   // Clip to play when the player picks up a power-up
+    public AudioClip acidClip;
 
     [Header("Volume Settings")]
     [Range(0f, 1f)]
     public float sfxVolume = 1f;    // Master volume for all one-shot sound effects
+    [Range(0f, 1f)]
+    public float acidVolume = 0.5f;
 
     private void Awake()
     {
@@ -69,6 +73,37 @@ public class AudioManager : MonoBehaviour
         sfxSource.PlayOneShot(powerupClip, sfxVolume);
     }
 
+    /// Start playing acid loop sound (loop = true on the AudioSource).
+    public void PlayAcidSound()
+    {
+        if (acidClip == null || acidSource == null)
+        {
+            Debug.LogWarning("PlayAcidSound(): acidClip or acidSource is null");
+            return;
+        }
+
+        // If acidSource is already playing the correct clip, do nothing
+        if (acidSource.isPlaying && acidSource.clip == acidClip)
+            return;
+
+        acidSource.clip = acidClip;      // Assign the clip we set in Inspector
+        acidSource.volume = acidVolume;  // Make sure volume is correct
+        acidSource.loop = true;          // Ensure the AudioSource will loop
+        acidSource.Play();
+    }
+
+    /// Stop the acid loop sound if it is playing.
+    public void StopAcidSound()
+    {
+        if (acidSource == null)
+        {
+            Debug.LogWarning("StopAcidSound(): acidSource is null");
+            return;
+        }
+
+        if (acidSource.isPlaying)
+            acidSource.Stop();
+    }
 
     /// Adjust the global one-shot SFX volume at runtime.
     public void SetSFXVolume(float vol)

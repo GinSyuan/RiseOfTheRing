@@ -16,6 +16,7 @@ public class AcidRising : MonoBehaviour
 
     private void Start()
     {
+        AudioManager.Instance.PlayAcidSound();
         // Initialize current rise speed with the base value
         currentRiseSpeed = baseRiseSpeed;
     }
@@ -46,8 +47,12 @@ public class AcidRising : MonoBehaviour
     private IEnumerator PauseCoroutine(float seconds)
     {
         isPaused = true;                // Mark as paused
+        AudioManager.Instance.StopAcidSound();
+
         yield return new WaitForSeconds(seconds);
+
         isPaused = false;               // Resume rising after wait
+        AudioManager.Instance.PlayAcidSound();
     }
 
 
