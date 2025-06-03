@@ -118,6 +118,8 @@ public class GameManager : MonoBehaviour
     /// Activates the Game Over panel, displays max height, and pauses the game.
     public void GameOver()
     {
+        AudioManager.Instance.StopAcidSound();
+
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
