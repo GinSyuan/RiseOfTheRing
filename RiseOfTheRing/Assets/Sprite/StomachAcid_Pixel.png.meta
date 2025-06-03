@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d9f915fa58dde344294f6bf9020b562d
+guid: a7a6dae9f8bdd184e876c38e8fc6d80a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4606908045521496030
-    second: Heart_0
+      213: 3804775688381193561
+    second: StomachAcid_Pixel_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Heart_0
+      name: StomachAcid_Pixel_0
       rect:
         serializedVersion: 2
-        x: 22
-        y: 35
-        width: 723
-        height: 641
+        x: 128
+        y: 64
+        width: 838
+        height: 955
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -127,8 +127,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ed7a23e75760fef30800000000000000
-      internalID: 4606908045521496030
+      spriteID: 95dd00c74574dc430800000000000000
+      internalID: 3804775688381193561
       vertices: []
       indices: 
       edges: []
@@ -143,8 +143,7 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      Heart_0: 4606908045521496030
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

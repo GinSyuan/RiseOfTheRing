@@ -1,7 +1,7 @@
-// GameManager.cs
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -15,13 +15,13 @@ public class GameManager : MonoBehaviour
     [Header("Timer Settings")]
     public float timeLimit = 60f;            // Game time limit in seconds
     private float timer;                     // Internal timer counter
-    public Text timerText;                   // UI Text to display remaining time
+    public TextMeshProUGUI timerText;                   // UI Text to display remaining time
 
     [Header("Life Icons")]
-    public SpriteRenderer[] lifeIcons;       // Array of SpriteRenderers for heart icons
+    public Image[] lifeIcons;       // Array of SpriteRenderers for heart icons
 
     [Header("Game Over & Max Height")]
-    public Text heightText;                  // UI Text to display max height reached
+    public TextMeshProUGUI heightText;                  // UI Text to display max height reached
     public GameObject gameOverPanel;         // Game Over UI panel
     public Transform player;                 // Reference to player Transform for height tracking
 
@@ -42,6 +42,12 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        // Hide game over UI
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(false);
+        }
+
         // Initialize lives and timer at game start
         currentLives = maxLives;
         timer = timeLimit;
@@ -50,31 +56,28 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        // If the game is paused (timeScale = 0), skip timer update
         if (Time.timeScale == 0f)
             return;
 
-        // Decrease timer and update UI
-        timer -= Time.deltaTime;
-        UpdateTimerUI();
-
-        // Track the highest Y position of the player
         if (player.position.y > maxHeight)
         {
             maxHeight = player.position.y;
         }
 
-        // If time has run out, trigger Game Over
+        heightText.text = "Height: " + maxHeight.ToString("F2");
+
+        timer -= Time.deltaTime;
+        UpdateTimerUI();
+
         if (timer <= 0f)
         {
             GameOver();
         }
     }
 
-    /// <summary>
+
     /// Called when the player takes damage (e.g., collides with an enemy).
     /// Decrements life count and updates UI. Triggers Game Over if lives reach zero.
-    /// </summary>
     public void TakeDamage()
     {
         // Only decrement if there are lives left
@@ -92,10 +95,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    /// <summary>
+
     /// Updates the visibility of heart-icon SpriteRenderers
     /// based on the current number of lives.
-    /// </summary>
     private void UpdateLivesUI()
     {
         for (int i = 0; i < lifeIcons.Length; i++)
@@ -105,27 +107,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    /// <summary>
+
     /// Updates the UI text showing remaining time, using ceiling of the timer value.
-    /// </summary>
     private void UpdateTimerUI()
     {
-        timerText.text = Mathf.Ceil(timer).ToString();
+        timerText.text = "Timer: " + Mathf.Ceil(timer).ToString();
     }
 
-    /// <summary>
+
     /// Activates the Game Over panel, displays max height, and pauses the game.
-    /// </summary>
     public void GameOver()
     {
-        gameOverPanel.SetActive(true);
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+        }
         heightText.text = "Height: " + maxHeight.ToString("F2");
         Time.timeScale = 0f;  // Pause the game
     }
 
-    /// <summary>
+
     /// Optional method to retrieve the current number of lives.
-    /// </summary>
     public int GetCurrentLives()
     {
         return currentLives;
