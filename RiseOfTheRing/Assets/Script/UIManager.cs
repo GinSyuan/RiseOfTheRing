@@ -23,7 +23,7 @@ public class UIManager : MonoBehaviour
 
     [Header("Audio")]
     public AudioSource musicSource;
-    public Slider musicSlider;
+    public List<Slider> musicSlider;
 
     private bool _isPaused = false;
 
@@ -77,9 +77,18 @@ public class UIManager : MonoBehaviour
         mainSettingsUI.SetActive(true);
     }
 
-    public void onMusicVolumeChange()
+    public void onMusicVolumeChange(Slider changedSlider)
     {
-        musicSource.volume = musicSlider.value;
+        float volume = changedSlider.value;
+        musicSource.volume = volume;
+
+        foreach (Slider slider in musicSlider)
+        {
+            if(slider != changedSlider)
+            {
+                slider.value = volume;
+            }
+        }
     }
 
     public void BackToMainMenu()
