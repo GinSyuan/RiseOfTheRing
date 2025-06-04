@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 024ffc1b143c99648bb3abea332d01e5
+guid: 62d42a922251ec2419301e7ed6a7e132
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1943762145526278490
-    second: spriteSheet_Template_5x5_002_0
-  - first:
-      213: -43669927987438971
-    second: spriteSheet_Template_5x5_002_1
+      213: -4525032030392270675
+    second: Acid_Bouble_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -40,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -116,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: spriteSheet_Template_5x5_002_0
+      name: Acid_Bouble_0
       rect:
         serializedVersion: 2
-        x: 30
-        y: 1207
-        width: 247
-        height: 141
+        x: 3
+        y: 3
+        width: 27
+        height: 27
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -130,29 +127,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a59e1f37f51a9fa10800000000000000
-      internalID: 1943762145526278490
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: spriteSheet_Template_5x5_002_1
-      rect:
-        serializedVersion: 2
-        x: 364
-        y: 1206
-        width: 218
-        height: 142
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 58a11fe8e6ad46ff0800000000000000
-      internalID: -43669927987438971
+      spriteID: da0443fc75bd331c0800000000000000
+      internalID: -4525032030392270675
       vertices: []
       indices: 
       edges: []
@@ -160,14 +136,15 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Acid_Bouble_0: -4525032030392270675
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

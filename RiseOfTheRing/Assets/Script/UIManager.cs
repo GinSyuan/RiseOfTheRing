@@ -242,7 +242,7 @@ public class UIManager : MonoBehaviour
         if (pauseMenuUI != null)
             pauseMenuUI.SetActive(false);
         if (pauseControlsUI != null)
-            pauseControlsUI.SetActive(true);
+            pauseControlsUI.SetActive(false);
     }
 
     /// <summary>
