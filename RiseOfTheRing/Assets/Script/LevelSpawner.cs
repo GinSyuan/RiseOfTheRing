@@ -1,72 +1,82 @@
+﻿// LevelSpawner.cs
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelSpawner : MonoBehaviour
 {
     [Header("List of Level Prefabs (in the exact order you want them to spawn)")]
-    public GameObject[] levelPrefabs;    
+    public GameObject[] levelPrefabs;        // Array of level prefabs to spawn in sequence
 
     [Header("Height of Each Level in World Units")]
-    public float levelHeight = 10f;      
+    public float levelHeight = 10f;          // Vertical spacing between each spawned level
 
     [Header("Number of Initial Levels")]
-    public int initialLevels = 6;         // Spawn all 6 prefabs at game start: indices 0..5.
+    public int initialLevels = 6;            // Spawn the first N prefabs at game start
 
-    private float highestY = 0f;          // Keeps track of the highest Y position where a level has been spawned.
-    private int nextIndex = 0;            // The index of the next prefab to spawn.
+    [Header("Player Transform (used to trigger new level spawn)")]
+    public Transform player;                 // Reference to the player’s Transform
+
+    private float highestY = 0f;             // Tracks the highest Y position where a level has been spawned
+    private int nextIndex = 0;               // Index of the next prefab to spawn
 
     private void Start()
     {
-        // Spawn the first batch of levels: indices 0,1,2,3,4,5 in that exact sequence.
+        // Spawn the initial set of levels using indices 0..initialLevels-1
         for (int i = 0; i < initialLevels; i++)
         {
             float spawnY = i * levelHeight;
             SpawnLevelAtY(spawnY);
         }
 
-        // After spawning 6 levels (0..5), the highestY sits at (5 * levelHeight).
+        // After spawning initialLevels, highestY is at (initialLevels - 1) * levelHeight
         highestY = (initialLevels - 1) * levelHeight;
 
-        // Set nextIndex = 1 so that subsequent spawns skip prefab 0.
-        //    That means the next call to SpawnLevelAtY(...) will use levelPrefabs[1].
+        // Set nextIndex to 1 so that subsequent spawns skip the very first prefab (index 0)
         nextIndex = 1;
     }
 
     private void Update()
     {
-        // If camera has climbed close enough to the topmost spawned level, spawn another one.
-        if (Camera.main.transform.position.y + 10f > highestY)
+        if (player == null)
+        {
+            Debug.LogWarning("Player reference is not set on LevelSpawner.");
+            return;
+        }
+
+        // When the player’s Y position plus a buffer exceeds highestY, spawn the next level
+        // Here we use half a levelHeight as a buffer so the next segment appears slightly before the player reaches the very top.
+        float triggerHeight = player.position.y + (levelHeight * 0.5f);
+        if (triggerHeight > highestY)
         {
             float spawnY = highestY + levelHeight;
             SpawnLevelAtY(spawnY);
         }
     }
 
-
-    /// Instantiates the prefab at levelPrefabs[nextIndex] in Inspector order, 
-    /// then advances nextIndex so it stays between 1 and (length-1).
+    /// <summary>
+    /// Instantiates the prefab at levelPrefabs[nextIndex], then moves it to this scene so it is unloaded correctly.
+    /// </summary>
     private void SpawnLevelAtY(float yPos)
     {
-        // Choose the prefab at current nextIndex
         int index = nextIndex;
 
-        // Advance nextIndex so that it loops from 1 through levelPrefabs.Length - 1.
-        // In other words: if nextIndex = 5, nextIndex becomes 1 (skipping 0).
+        // Update nextIndex so it cycles through 1..(length-1) (never reuse index 0 again)
         nextIndex++;
         if (nextIndex >= levelPrefabs.Length)
-        {
-            // Wrap around to 1 (never use index 0 again after initial spawn).
             nextIndex = 1;
-        }
 
         Vector3 spawnPosition = new Vector3(0f, yPos, 0f);
-        Debug.Log($"Spawning level '{levelPrefabs[index].name}' at Y = {yPos}");
+        Debug.Log($"Spawning level '{levelPrefabs[index].name}' at Y = {yPos:F2}");
 
-        // Instantiate the chosen level prefab so its bottom sits at world Y = yPos.
-        Instantiate(levelPrefabs[index], spawnPosition, Quaternion.identity);
+        GameObject levelInstance = Instantiate(levelPrefabs[index], spawnPosition, Quaternion.identity);
 
-        // Update highestY to reflect that we've now spawned at yPos.
+        // Move the instantiated object to the same scene as this script, ensuring proper unloading
+        Scene thisScene = gameObject.scene;
+        SceneManager.MoveGameObjectToScene(levelInstance, thisScene);
+
+        // Update highestY to the Y position of the level we just spawned
         highestY = yPos;
     }
 }

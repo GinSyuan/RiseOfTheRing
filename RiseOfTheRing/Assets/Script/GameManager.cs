@@ -1,137 +1,129 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
+    public static GameManager Instance;      // Singleton instance
 
     [Header("Lives Settings")]
-    public int maxLives = 3;                 // Maximum number of lives
-    private int currentLives;                // Current number of lives
+    public int maxLives = 3;                 // Maximum number of lives the player can have
+    private int currentLives;                // Current number of lives remaining
 
     [Header("Timer Settings")]
     public float timeLimit = 60f;            // Game time limit in seconds
     private float timer;                     // Internal timer counter
-    public TextMeshProUGUI timerText;                   // UI Text to display remaining time
+    public TextMeshProUGUI timerText;        // UI Text field to display remaining time
 
     [Header("Life Icons")]
-    public Image[] lifeIcons;       // Array of SpriteRenderers for heart icons
+    public Image[] lifeIcons;                // Array of UI images representing lives
 
-    [Header("Game Over & Max Height")]
-    public TextMeshProUGUI heightText;                  // UI Text to display max height reached
-    public GameObject gameOverPanel;         // Game Over UI panel
-    public Transform player;                 // Reference to player Transform for height tracking
-
-    private float maxHeight;                 // Highest Y position reached by the player
+    [Header("Height Display")]
+    public TextMeshProUGUI heightText;       // UI Text field to display the highest height reached
+    public Transform player;                 // Reference to the player's Transform for height tracking
+    private float maxHeight;                 // The highest Y position reached by the player
 
     private void Awake()
     {
-        // Initialize singleton instance
+        // Implement singleton pattern: if no instance exists, assign this; otherwise destroy duplicates
         if (Instance == null)
-        {
             Instance = this;
-        }
         else
-        {
             Destroy(gameObject);
-        }
     }
 
     private void Start()
     {
-        // Hide game over UI
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(false);
-        }
-
-        // Initialize lives and timer at game start
+        // Initialize lives and timer when the scene starts
         currentLives = maxLives;
         timer = timeLimit;
-        UpdateLivesUI();   // Display all life icons initially
+        UpdateLivesUI();
     }
 
     private void Update()
     {
+        // If the game is paused (Time.timeScale == 0), do not run game logic
         if (Time.timeScale == 0f)
             return;
 
+        // Update the maximum height if the player has climbed higher
         if (player.position.y > maxHeight)
-        {
             maxHeight = player.position.y;
-        }
+        heightText.text = "Height: " + maxHeight.ToString("F2"); // Display the height with two decimal places
 
-        heightText.text = "Height: " + maxHeight.ToString("F2");
-
+        // Decrease the timer and update the timer UI
         timer -= Time.deltaTime;
         UpdateTimerUI();
 
+        // If time runs out, trigger Game Over
         if (timer <= 0f)
-        {
             GameOver();
-        }
     }
 
 
-    /// Called when the player takes damage (e.g., collides with an enemy).
-    /// Decrements life count and updates UI. Triggers Game Over if lives reach zero.
+    /// Called when the player takes damage: decrement lives, update UI, and check for Game Over.
     public void TakeDamage()
     {
-        // Only decrement if there are lives left
         if (currentLives <= 0)
             return;
 
         currentLives--;
-        Debug.Log($"TakeDamage(): Lives decreased to {currentLives}");
         UpdateLivesUI();
 
-        // If lives drop to zero or below, trigger Game Over
         if (currentLives <= 0)
-        {
             GameOver();
-        }
     }
 
 
-    /// Updates the visibility of heart-icon SpriteRenderers
-    /// based on the current number of lives.
+    /// Update the life icons to reflect the current number of lives.
     private void UpdateLivesUI()
     {
         for (int i = 0; i < lifeIcons.Length; i++)
-        {
-            // Show the icon if its index is less than currentLives, hide otherwise
             lifeIcons[i].enabled = (i < currentLives);
-        }
     }
 
 
-    /// Updates the UI text showing remaining time, using ceiling of the timer value.
+    /// Update the timer text to show the remaining seconds (rounded up).
     private void UpdateTimerUI()
     {
         timerText.text = "Timer: " + Mathf.Ceil(timer).ToString();
     }
 
 
-    /// Activates the Game Over panel, displays max height, and pauses the game.
+    /// Handle Game Over: stop acid sound, save final height, notify UIManager, and pause the game.
     public void GameOver()
     {
+        // Stop the continuous acid sound effect
         AudioManager.Instance.StopAcidSound();
 
-        if (gameOverPanel != null)
+        // Store the final height so UIManager can display it on the Game Over screen
+        PlayerPrefs.SetFloat("LastHeight", maxHeight);
+
+        // Find the UIManager in the scene and show the Game Over UI
+        UIManager ui = FindObjectOfType<UIManager>();
+        if (ui != null)
         {
-            gameOverPanel.SetActive(true);
+            ui.ShowGameOver();
         }
-        heightText.text = "Height: " + maxHeight.ToString("F2");
-        Time.timeScale = 0f;  // Pause the game
+        else
+        {
+            Debug.LogWarning("Cannot find UIManager in the scene");
+        }
+
+        // Pause all game logic
+        Time.timeScale = 0f;
     }
 
 
-    /// Optional method to retrieve the current number of lives.
-    public int GetCurrentLives()
+    /// Called by UIManager.ReplayGame(): reset lives, timer, and height, and update the UI.
+    public void ResetGameLogic()
     {
-        return currentLives;
+        currentLives = maxLives;
+        timer = timeLimit;
+        maxHeight = 0f;
+        UpdateLivesUI();
     }
 }

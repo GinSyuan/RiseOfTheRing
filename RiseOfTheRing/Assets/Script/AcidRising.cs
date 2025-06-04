@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-/// AcidRising moves the acid GameObject upward over time, with a gradual acceleration.
-/// It can be paused for a specified duration
+
 public class AcidRising : MonoBehaviour
 {
     [Header("Rising Settings")]

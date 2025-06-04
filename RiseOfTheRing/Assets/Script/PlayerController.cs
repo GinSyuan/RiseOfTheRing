@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-/// PlayerController manages player movement, jumping, collisions with enemies, 
-/// and triggers one-shot sounds (jump and damage) via AudioManager.
+
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
@@ -150,9 +149,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    /// <summary>
+    
     /// Apply knockback force to the player in the specified horizontal direction.
-    /// </summary>
     private void ApplyKnockback(Vector2 direction)
     {
         rb.velocity = new Vector2(direction.x * knockbackForce, rb.velocity.y * 0.5f);
